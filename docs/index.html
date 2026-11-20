@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bank Customer Churn Report</title>
+<meta name="description" content="Interactive churn report for 10,000 retail bank customers: drivers, customer segments, five models compared on one ROC chart, and a working prediction page.">
+<meta property="og:title" content="Bank Customer Churn Report">
+<meta property="og:description" content="Contacting the riskiest 20% of customers reaches 60% of those who leave. R models, k-means segments and a live prediction page.">
+<meta property="og:image" content="social-preview.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23118DFF'/%3E%3Crect x='7' y='16' width='4' height='9' fill='white'/%3E%3Crect x='14' y='11' width='4' height='14' fill='white'/%3E%3Crect x='21' y='6' width='4' height='19' fill='white'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="nav" aria-label="Report navigation">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"><i></i><i></i><i></i></span>
+      <div><b>Customer churn</b><small>Retail bank · 10,000 customers</small></div>
+    </div>
+    <nav class="pages" role="tablist" aria-label="Report pages">
+      <button role="tab" data-page="overview" aria-selected="true"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3h6v6H3zM11 3h6v4h-6zM11 9h6v8h-6zM3 11h6v6H3z"/></svg>Overview</button>
+      <button role="tab" data-page="segments" aria-selected="false"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="6" cy="7" r="3"/><circle cx="14" cy="6" r="2.5"/><circle cx="11" cy="14" r="3.5"/></svg>Segments</button>
+      <button role="tab" data-page="models" aria-selected="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 17L3 3M3 17h14M5 14c3-1 4-7 7-8s4-2 5-3" fill="none" stroke-width="2"/></svg>Models</button>
+      <button role="tab" data-page="predict" aria-selected="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 3v5l4 2" fill="none" stroke-width="2"/></svg>Predict</button>
+    </nav>
+
+    <section class="filters" aria-label="Filters">
+      <div class="fhead"><span>Filters</span><button id="clearFilters" type="button">Clear all</button></div>
+      <p class="fnote">Apply to Overview and Segments. Click any bar to filter.</p>
+      <div class="slicer"><span class="sl">Country</span><div class="chips" data-f="geo"></div></div>
+      <div class="slicer"><span class="sl">Gender</span><div class="chips" data-f="gender"></div></div>
+      <div class="slicer"><span class="sl">Active member</span><div class="chips" data-f="active"></div></div>
+      <div class="slicer"><span class="sl">Products held</span><div class="chips" data-f="products"></div></div>
+      <div class="slicer"><span class="sl">Age</span>
+        <div class="range"><label>From <input id="ageMin" type="number" min="18" max="92" value="18" inputmode="numeric"></label><label>to <input id="ageMax" type="number" min="18" max="92" value="92" inputmode="numeric"></label></div>
+      </div>
+    </section>
+
+    <div class="navfoot">
+      <a href="https://github.com/Youssef-Remmal-tech/bank-customer-churn">Code &amp; method on GitHub</a>
+      <span>Youssef Remmal</span>
+    </div>
+  </aside>
+
+  <main class="canvas">
+    <!-- OVERVIEW -->
+    <section class="page" id="page-overview" role="tabpanel" aria-label="Overview">
+      <header class="phead">
+        <div><h1>Who is leaving, and how fast?</h1><p class="sub" id="filterSummary">All customers</p></div>
+        <span class="stamp">Data: 10,000 customers · one observation each</span>
+      </header>
+      <div class="kpis" id="kpis"></div>
+      <div class="grid g-overview">
+        <article class="card"><h2>Churn rate by country</h2><div class="chart" id="cGeo"></div></article>
+        <article class="card"><h2>Churn rate by age band</h2><div class="chart" id="cAge"></div></article>
+        <article class="card"><h2>Churn rate by products held</h2><div class="chart" id="cProd"></div></article>
+        <article class="card"><h2>Activity × gender</h2><div class="matrix" id="cMatrix"></div></article>
+        <article class="card wide"><h2>Churn rate by balance band</h2><div class="chart" id="cBal"></div></article>
+        <article class="card insight full"><h2>What stands out</h2><ul id="insights"></ul></article>
+      </div>
+    </section>
+
+    <!-- SEGMENTS -->
+    <section class="page" id="page-segments" role="tabpanel" aria-label="Segments" hidden>
+      <header class="phead">
+        <div><h1>Three customer segments, two very different risks</h1><p class="sub">k-means on six standardised fields (credit score, age, tenure, balance, products, salary). Filters apply.</p></div>
+        <span class="stamp">k = 3 · elbow method · 25 random starts</span>
+      </header>
+      <div class="segcards" id="segCards"></div>
+      <div class="grid g-seg">
+        <article class="card full"><h2>Average profile by segment</h2><div class="tablewrap" id="segTable"></div><p class="foot">Blue: above the all-customer average. Orange: below it. Stronger colour, bigger gap.</p></article>
+        <article class="card"><h2>Churn rate: active vs inactive, by segment</h2><div class="chart" id="cSegActive"></div></article>
+        <article class="card"><h2>Choosing k: within-cluster sum of squares</h2><div class="chart" id="cElbow"></div></article>
+        <article class="card insight"><h2>Recommendation</h2><div id="segRec"></div></article>
+      </div>
+    </section>
+
+    <!-- MODELS -->
+    <section class="page" id="page-models" role="tabpanel" aria-label="Models" hidden>
+      <header class="phead">
+        <div><h1>Five models, one hold-out set</h1><p class="sub" id="holdoutSub"></p></div>
+        <span class="stamp">70/30 stratified split · seed 123</span>
+      </header>
+      <div class="grid g-models">
+        <article class="card span2"><h2>Model comparison</h2><div class="tablewrap" id="modelTable"></div><p class="foot">Accuracy, recall and precision use a 0.5 cut-off. AUC uses every cut-off.</p><p class="takeaway" id="modelTake"></p></article>
+        <article class="card"><h2>ROC curves on the same axes</h2><div class="chart tall" id="cRoc"></div><div class="legend" id="rocLegend"></div></article>
+        <article class="card"><h2>Who to contact: leavers reached by budget</h2>
+          <div class="capctl"><label for="capSlider">Retention team contacts the riskiest <b id="capPct">20%</b> of customers</label><input id="capSlider" type="range" min="5" max="60" value="20"></div>
+          <div class="chart" id="cCapture"></div><div class="capout" id="capOut"></div></article>
+        <article class="card"><h2>Confusion matrix</h2>
+          <label class="sel">Model <select id="cmModel"></select></label>
+          <div id="cmGrid" class="cm"></div></article>
+        <article class="card"><h2>Tuning the tree (Task 2)</h2><div class="chart" id="cCp"></div><p class="foot" id="cpNote"></p></article>
+        <article class="card full"><h2>Task 1 decision tree: the rules staff can read</h2><div class="treewrap" id="tree1"></div><p class="foot">Each box: share who left, and share of the training base that reaches it. Red boxes predict “leaves”.</p></article>
+      </div>
+    </section>
+
+    <!-- PREDICT -->
+    <section class="page" id="page-predict" role="tabpanel" aria-label="Predict" hidden>
+      <header class="phead">
+        <div><h1>Score a customer</h1><p class="sub">Both trees score in your browser from the exported R models, matching R’s own predictions exactly.</p></div>
+        <span class="stamp fixed">Fixed: Gender and other categories are cast to the training levels</span>
+      </header>
+      <div class="grid g-predict">
+        <article class="card form" id="form">
+          <h2>Customer profile</h2>
+          <div class="seg-ctl" data-k="Gender"><span>Gender</span><button type="button" data-v="Female" aria-pressed="true">Female</button><button type="button" data-v="Male" aria-pressed="false">Male</button></div>
+          <div class="seg-ctl" data-k="Geography"><span>Country</span><button type="button" data-v="France" aria-pressed="false">France</button><button type="button" data-v="Germany" aria-pressed="true">Germany</button><button type="button" data-v="Spain" aria-pressed="false">Spain</button></div>
+          <div class="seg-ctl" data-k="IsActiveMember"><span>Active member</span><button type="button" data-v="1" aria-pressed="false">Yes</button><button type="button" data-v="0" aria-pressed="true">No</button></div>
+          <div class="seg-ctl" data-k="HasCrCard"><span>Has credit card</span><button type="button" data-v="1" aria-pressed="true">Yes</button><button type="button" data-v="0" aria-pressed="false">No</button></div>
+          <div class="rng"><label for="inAge">Age <b id="vAge"></b></label><input id="inAge" type="range" min="18" max="92" value="52"></div>
+          <div class="rng"><label for="inProd">Products held <b id="vProd"></b></label><input id="inProd" type="range" min="1" max="4" value="1"></div>
+          <div class="rng"><label for="inTen">Tenure (years) <b id="vTen"></b></label><input id="inTen" type="range" min="0" max="10" value="3"></div>
+          <div class="rng"><label for="inBal">Balance <b id="vBal"></b></label><input id="inBal" type="range" min="0" max="250000" step="1000" value="110000"></div>
+          <div class="rng"><label for="inCs">Credit score <b id="vCs"></b></label><input id="inCs" type="range" min="350" max="850" value="640"></div>
+          <div class="rng"><label for="inSal">Estimated salary <b id="vSal"></b></label><input id="inSal" type="range" min="0" max="200000" step="1000" value="95000"></div>
+        </article>
+        <article class="card result" id="res1"></article>
+        <article class="card result" id="res2"></article>
+        <article class="card span2"><h2>Customers like this</h2><div id="similar"></div></article>
+        <article class="card full"><h2>Why: this customer’s path through the Task 1 tree</h2><div class="treewrap" id="tree1p"></div></article>
+      </div>
+    </section>
+
+    <footer class="credits">Built by Youssef Remmal from an MSc Business Data Analytics project (Bangor University). Models trained in R (rpart, caret, pROC); the original report was delivered in Power BI. Dataset: the public “Bank Customer Churn” benchmark, 10,000 customers. <a href="https://github.com/Youssef-Remmal-tech/bank-customer-churn">Method, code and tests</a>.</footer>
+  </main>
+</div>
+<script src="data.js"></script>
+<script src="tree.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
