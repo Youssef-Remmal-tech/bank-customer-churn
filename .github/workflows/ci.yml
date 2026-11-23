@@ -32,3 +32,5 @@ jobs:
           node-version: "20"
       - name: Check the browser report scores like R
         run: node tests/test_dashboard.js
+      - name: Check the Power BI DAX measures score like R
+        run: node tests/test_powerbi_dax.js
