@@ -1,57 +1,63 @@
-# Power BI prediction page: the Gender fix
+# Power BI report
 
-## The problem
+A five-page Power BI report for the churn project, saved as a **Power BI Project (PBIP)**. A PBIP stores the report and the semantic model as readable text files, so every visual, measure and data step can be reviewed and version-controlled, unlike a single binary `.pbix`.
 
-The report's Prediction page uses two R script visuals, one for the Task 1 decision tree and one for the Task 2 tuned tree. Each scores the customer profile chosen with parameters and slicers. In review, both visuals worked for `Gender = 1` but not for `Gender = 0`.
+**Open it:** download the repository, then open [`BankChurn.pbip`](BankChurn.pbip) in a current version of Power BI Desktop (Windows). The data is embedded in the model, so there are no file paths to fix and R is not needed. On first open, let Power BI load the import tables. To get a single `.pbix` file, use File → Save As.
 
-## The cause
+## Pages
 
-The trees were trained in R with `Gender` as a **factor**. R stores factor levels as integer codes that start at 1:
-
-| Label | Code inside the model |
+| Page | What it shows |
 |---|---|
-| Female | 1 |
-| Male | 2 |
+| **Overview** | KPI cards, exit rate by country, gender, age band and activity, with slicers for each |
+| **Model Performance** | Held-out metrics for both trees, the two ROC curves on one chart, confusion matrices, and the cp tuning curve |
+| **Tree Visualisations** | The Task 1 decision tree and the Task 2 tuned tree |
+| **Interactive Prediction** | Choose a customer profile with 10 slicers and see the exit probability and predicted class from both trees side by side |
+| **Data & Validation** | Data-quality checks, the split, and the tests that prove the prediction page scores exactly like R |
 
-Power BI passes slicer values to an R visual as **numbers**, so Gender arrived as 0 or 1. Only the value that happened to line up with a code the model knew gave a usable answer. Recent versions of R refuse the input outright:
+The report has 55 visuals, all with alternative text, on a 1280 × 720 canvas.
 
-```
-variable 'Gender' was fitted with type "factor" but type "numeric" was supplied
-```
+## The Gender fix, done properly
 
-`IsActiveMember` and `HasCrCard` were also factors in training (levels "0" and "1") and carry the same risk when passed as numbers.
+**The original problem.** The first version of this report scored customers with R script visuals. The trees were trained with `Gender` as a factor (Female = level 1, Male = level 2), but Power BI sent the slicer value as a number (0 or 1). Only the value that happened to match a level code gave a valid prediction, so the page worked for one gender only. `IsActiveMember` and `HasCrCard` carried the same hidden risk.
 
-## The fix
+**The fix in this report.** Scoring no longer runs through R. Both trees are rebuilt as native DAX measures (`Prediction[Task 1 Exit Probability]` and `Prediction[Task 2 Exit Probability]`) using the exact split values from the saved R models:
 
-Cast every categorical input back to the exact training levels before calling `predict()`:
+- **Gender and Country are text slicers** (Female/Male, France/Germany/Spain), so there is no numeric code to misread.
+- **The Task 2 measure converts those choices** into the one-hot columns caret used in training (`GenderMale`, `GeographyGermany`, `GeographySpain`).
+- **No R at runtime** means the report also works in the Power BI Service, where R visuals are restricted.
+
+**Proof.** Both DAX measures were checked against the R models on all 10,000 customers: 20,000 comparisons, 0 mismatches. This repository verifies the same thing independently. It parses the DAX from [`Prediction.tmdl`](BankChurn.SemanticModel/definition/tables/Prediction.tmdl) and scores every customer, and the Task 1 measure matches R exactly. See [`validation/`](validation):
+
+| File | What it checks |
+|---|---|
+| `tree_translation_validation.csv` | R model vs DAX measure, 10,000 customers per tree |
+| `metric_reconciliation.csv` | The report's metrics match the R hold-out results |
+| `prediction_validation_cases.csv` | 12 reference profiles covering both genders, all three countries and both activity states |
+
+## If you need R visuals instead
+
+[`prediction_visual.R`](prediction_visual.R) is the corrected R visual script for anyone who wants to keep scoring in R. Every categorical input is cast back to the training levels before `predict()`:
 
 ```r
 gender <- as.character(customer$Gender)
-gender[gender == "0"] <- "Female"   # 0 = Female, 1 = Male
+gender[gender == "0"] <- "Female"
 gender[gender == "1"] <- "Male"
 customer$Gender         <- factor(gender, levels = c("Female", "Male"))
 customer$Geography      <- factor(customer$Geography, levels = c("France", "Germany", "Spain"))
 customer$HasCrCard      <- factor(as.character(as.integer(customer$HasCrCard)), levels = c("0", "1"))
 customer$IsActiveMember <- factor(as.character(as.integer(customer$IsActiveMember)), levels = c("0", "1"))
-if (anyNA(customer)) stop("An input is outside the values the model was trained on.")
 ```
 
-The complete visual script is [`prediction_visual.R`](prediction_visual.R). To use it:
+Set `MODEL_FILE` to `outputs/models/task1_tree.rds` or `task2_tuned_tree.rds` (created by `Rscript run_all.R`). The same logic is the `predict_churn()` function in [`../R/predict_customer.R`](../R/predict_customer.R), covered by `tests/test_pipeline.R`.
 
-1. Run `Rscript run_all.R` once to create `outputs/models/task1_tree.rds` and `task2_tuned_tree.rds`.
-2. In Power BI, open each R script visual on the Prediction page and paste in the script.
-3. Set `MODEL_FILE` to the full path of the Task 1 or Task 2 model file.
-4. If your parameter fields have different names, edit the `customer <- data.frame(...)` block.
+## Structure
 
-The same logic is available as a function, `predict_churn()`, in [`../R/predict_customer.R`](../R/predict_customer.R). It also accepts "Female"/"Male" text and stops with a clear message if a value was never seen in training.
-
-## How it is tested
-
-`tests/test_pipeline.R` covers four cases:
-
-- **The bug is real:** numeric Gender passed to the raw model fails.
-- **0/1 and Female/Male give identical predictions** for both trees, on more than 1,400 customers.
-- **Both genders return valid probabilities** for both trees.
-- **Gender changes some tuned-tree predictions,** so the check above is not passing by accident.
-
-The visual script was also run with a simulated Power BI `dataset` for Gender = 0 and Gender = 1, and both produced a prediction.
+```
+powerbi/
+├── BankChurn.pbip                 open this in Power BI Desktop
+├── BankChurn.Report/              pages, visuals, theme and tree images (PBIR)
+├── BankChurn.SemanticModel/       tables, DAX measures and embedded data (TMDL)
+│   └── definition/tables/Prediction.tmdl   the two tree measures
+├── validation/                    R vs DAX and metric reconciliation
+└── prediction_visual.R            corrected R visual, for R-based scoring
+```
