@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "BankChurn"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "3d36485c-07be-44ee-aa3c-a610a1271875"
+  }
+}
