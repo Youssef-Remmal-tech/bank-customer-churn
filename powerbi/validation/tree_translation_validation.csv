@@ -1,0 +1,3 @@
+"Model","RowsChecked","MaxAbsoluteDifference","ExactMismatchCount","Status"
+"Task 1 - Full Decision Tree",10000,0,0,"PASS"
+"Task 2 - AI Enhanced Tuned Tree",10000,0,0,"PASS"

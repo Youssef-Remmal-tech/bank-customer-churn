@@ -1,0 +1,12 @@
+/// Estimated salary selector.
+table 'Scenario Estimated Salary'
+
+	column Value
+		dataType: int64
+		formatString: £#,##0
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition 'Scenario Estimated Salary' = calculated
+		mode: import
+		source = GENERATESERIES(0, 200000, 5000)

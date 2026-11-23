@@ -1,0 +1,42 @@
+/// Source data checks, split checks, and outcome prevalence from the reproducible model build.
+table 'Data Quality'
+
+	column Check
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Check
+
+	column Value
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Value
+
+	column Result
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Result
+
+	column Note
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Note
+
+	partition 'Data Quality' = m
+		mode: import
+		source =
+			let
+				Encoded = Text.Combine({
+				"IkNoZWNrIiwiVmFsdWUiLCJSZXN1bHQiLCJOb3RlIgoiUm93cyIsMTAwMDAsIlBBU1MiLCJFeHBlY3RlZCAxMCwwMDAgY3VzdG9tZXIgcmVjb3JkcyIKIkNvbHVtbnMiLDE0LCJQQVNTIiwiRXhwZWN0ZWQgMTQg",
+				"c291cmNlIGZpZWxkcyIKIk1pc3NpbmcgY2VsbHMiLDAsIlBBU1MiLCJObyBpbXB1dGF0aW9uIHJlcXVpcmVkIHdoZW4gemVybyIKIkV4YWN0IGR1cGxpY2F0ZSByb3dzIiwwLCJQQVNTIiwiV2hvbGUtcm93IHVu",
+				"aXF1ZW5lc3MiCiJEdXBsaWNhdGUgUm93TnVtYmVyIiwwLCJQQVNTIiwiQ2FuZGlkYXRlIHJvdyBrZXkiCiJEdXBsaWNhdGUgQ3VzdG9tZXJJZCIsMCwiUEFTUyIsIkN1c3RvbWVyIGlkZW50aWZpZXIgdW5pcXVl",
+				"bmVzcyIKIkludmFsaWQgY29udHJvbGxlZCB2YWx1ZXMiLDAsIlBBU1MiLCJHZW9ncmFwaHksIEdlbmRlciwgYmluYXJ5IGZsYWdzLCBhbmQgb3V0Y29tZSIKIkludmFsaWQgbnVtZXJpYyByYW5nZXMiLDAsIlBB",
+				"U1MiLCJDcmVkaXQgc2NvcmUsIGFnZSwgdGVudXJlLCBiYWxhbmNlLCBwcm9kdWN0cywgc2FsYXJ5IgoiT3V0Y29tZSBwcmV2YWxlbmNlIiwwLjIwMzcsIklORk8iLCJTaGFyZSBvZiBjdXN0b21lcnMgd2l0aCBF",
+				"eGl0ZWQgPSAxIgoiVHJhaW4gcm93cyIsNzAwMSwiUEFTUyIsIjcwJSBzdHJhdGlmaWVkIHBhcnRpdGlvbiB1c2luZyBzZWVkIDEyMyIKIlRlc3Qgcm93cyIsMjk5OSwiUEFTUyIsIjMwJSBoZWxkLW91dCBwYXJ0",
+				"aXRpb24gdXNpbmcgc2VlZCAxMjMiCg=="
+				}),
+				Decoded = Binary.FromText(Encoded, BinaryEncoding.Base64),
+				Source = Csv.Document(Decoded, [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"Check", type text}, {"Value", type text}, {"Result", type text}, {"Note", type text}}, "en-GB")
+			in
+				Typed

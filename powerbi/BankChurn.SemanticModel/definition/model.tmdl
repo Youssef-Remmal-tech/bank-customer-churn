@@ -1,0 +1,26 @@
+model Model
+	culture: en-GB
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-GB
+	discourageImplicitMeasures
+
+ref table Customers
+ref table 'Model Comparison'
+ref table 'ROC Points'
+ref table 'Confusion Matrix'
+ref table 'CP Tuning'
+ref table 'Prediction Validation Cases'
+ref table 'Data Quality'
+ref table 'Factor Regression Tests'
+ref table 'Tree Translation Validation'
+ref table 'Scenario Credit Score'
+ref table 'Scenario Geography'
+ref table 'Scenario Gender'
+ref table 'Scenario Age'
+ref table 'Scenario Tenure'
+ref table 'Scenario Balance'
+ref table 'Scenario Number of Products'
+ref table 'Scenario Has Credit Card'
+ref table 'Scenario Active Member'
+ref table 'Scenario Estimated Salary'
+ref table Prediction

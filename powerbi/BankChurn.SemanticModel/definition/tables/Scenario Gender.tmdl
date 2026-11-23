@@ -1,0 +1,11 @@
+/// Categorical gender selector preserving Female and Male factor levels.
+table 'Scenario Gender'
+
+	column Gender
+		dataType: string
+		summarizeBy: none
+		sourceColumn: [Gender]
+
+	partition 'Scenario Gender' = calculated
+		mode: import
+		source = DATATABLE("Gender", STRING, {{"Female"}, {"Male"}})

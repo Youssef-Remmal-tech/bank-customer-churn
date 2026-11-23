@@ -1,0 +1,77 @@
+/// Five-fold cross-validation results for cp values 0.001 through 0.020.
+table 'CP Tuning'
+
+	column 'Complexity Parameter'
+		dataType: decimal
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: cp
+
+	column ROC
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: ROC
+
+	column Sensitivity
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: Sens
+
+	column Specificity
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: Spec
+
+	column 'ROC Standard Deviation'
+		dataType: decimal
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: ROCSD
+
+	column 'Sensitivity Standard Deviation'
+		dataType: decimal
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: SensSD
+
+	column 'Specificity Standard Deviation'
+		dataType: decimal
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: SpecSD
+
+	partition 'CP Tuning' = m
+		mode: import
+		source =
+			let
+				Encoded = Text.Combine({
+				"ImNwIiwiUk9DIiwiU2VucyIsIlNwZWMiLCJST0NTRCIsIlNlbnNTRCIsIlNwZWNTRCIKMC4wMDEsMC44MTY5NzU3OTkyNzc0MjgsMC45Mzg4MzQwODA3MTc0ODksMC40ODQ1OTU3NTUxMjIwNzEsMC4wMTQyMTMx",
+				"NjQxNTk4MjE4LDAuMDAzOTgwNjg4OTcyNDA3NTYsMC4wMzE5MzA4ODc2MjU2NTY2CjAuMDAyLDAuNzY3OTY0MzE0ODEzNTAxLDAuOTU4Mzg1NjUwMjI0MjE1LDAuNDUzNzMwODMwNTcyOTM2LDAuMDEzMzUyOTQ2",
+				"NjAzMzkwOSwwLjAwOTE4MTMzMzczNDIyMDQxLDAuMDI0OTM2NTQwMDM5MjY5NwowLjAwMywwLjc1ODgwNDA4MTkyMjMyNiwwLjk1OTI4MjUxMTIxMDc2MiwwLjQ1MzA1MTE1OTM2Njk0OSwwLjAxNzE1Mzk4NzM1",
+				"MjU5OTUsMC4wMDg4MDExMjY3NjI1ODA4OCwwLjA0MTk3MTYwNTM1Mjc1NzEKMC4wMDQsMC43NTgzMjQ1MTA1MTQyNjgsMC45NTcxMzAwNDQ4NDMwNDksMC40NTIzMzQ2ODI4NjA5OTksMC4wMTY3OTI3MjkzMjcz",
+				"MTE3LDAuMDA0ODg3Njg2NjcwMjkxOTMsMC4wMjU1OTkxNTYwOTg3NTg3CjAuMDA1LDAuNzU2NzY3MDk3MjcyMTcyLDAuOTYxMDc2MjMzMTgzODU2LDAuNDM0NzkzMjc2ODk4NTQsMC4wMTYzMDM2NTU2NjE4MTIy",
+				"LDAuMDA1NjkzNDc4MTE1OTExNzEsMC4wMzQ0NDU3NzE1NDYxMDg2CjAuMDA2LDAuNzUzOTE3NjE0NDQ0NDAyLDAuOTY3ODkyMzc2NjgxNjE0LDAuNDE1ODQ4MzYyMTY0MTUyLDAuMDE0MTEzMTYyMTA1Mjg4OSww",
+				"LjAwNDkyODY1NzA5OTIwNTA0LDAuMDE1OTgzNzU5MjE3MzI3MQowLjAwNywwLjc1MzgxNzI4Mzk2NjkxOCwwLjk2NjA5ODY1NDcwODUyLDAuNDE4NjQwNjU3NTg4MDI2LDAuMDE0MzUwMjQxMTgyMjczNywwLjAw",
+				"OTA4ODg3OTY4NDQxODQ1LDAuMDIxNTE5NTA5ODA1OTYxNwowLjAwOCwwLjc1Mjg1MDg1NzExMjM2MywwLjk2ODQzMDQ5MzI3MzU0MywwLjQwOTU0NDg0MTEyMzc4OCwwLjAxNjUzNzc0ODg5MzgxMTIsMC4wMDU4",
+				"MjYxNDU5MjYwNjcsMC4wMTkxNTA4OTQ3MzQ1OTU0CjAuMDA5LDAuNzUyODUwODU3MTEyMzYzLDAuOTY4NDMwNDkzMjczNTQzLDAuNDA5NTQ0ODQxMTIzNzg4LDAuMDE2NTM3NzQ4ODkzODExMiwwLjAwNTgyNjE0",
+				"NTkyNjA2NywwLjAxOTE1MDg5NDczNDU5NTQKMC4wMSwwLjc1Mjg1MDg1NzExMjM2MywwLjk2ODQzMDQ5MzI3MzU0MywwLjQwOTU0NDg0MTEyMzc4OCwwLjAxNjUzNzc0ODg5MzgxMTIsMC4wMDU4MjYxNDU5MjYw",
+				"NjcsMC4wMTkxNTA4OTQ3MzQ1OTU0CjAuMDExLDAuNzUyNjY2NDQ5OTA2MDA2LDAuOTY1NTYwNTM4MTE2NTkyLDAuNDE2NTYyMzg0OTgzNDM4LDAuMDE2NDY1MTAxNjAyMTU1NiwwLjAwOTMxMTgxODcyODE5MTg2",
+				"LDAuMDI3NDQ2Njc2MjM5MzA1MwowLjAxMiwwLjc1MjY2NjQ0OTkwNjAwNiwwLjk2NTU2MDUzODExNjU5MiwwLjQxNjU2MjM4NDk4MzQzOCwwLjAxNjQ2NTEwMTYwMjE1NTYsMC4wMDkzMTE4MTg3MjgxOTE4Niww",
+				"LjAyNzQ0NjY3NjIzOTMwNTMKMC4wMTMsMC43NTIzNjY4NjY4Njc2OTMsMC45NjE0MzQ5Nzc1Nzg0NzUsMC40MjQ5ODM0Mzc2MTUwMTcsMC4wMTYzMjg5MDgwNTc0MzEzLDAuMDA4Njk1Mzg5ODc4NzczNjgsMC4w",
+				"MzM1OTM5NDczNDUzOTQKMC4wMTQsMC43NTIyMTUxODcyMjAxNDQsMC45NTcxMzAwNDQ4NDMwNDksMC40MzY5MTMyNjIxNzY0MiwwLjAxNjIxMzIyNzAwOTU2OTcsMC4wMTEzODY5NTYyMzE4MjM0LDAuMDQ1MTMx",
+				"NjQxMzg2MDg2MgowLjAxNSwwLjc1MjEyMzYxMjk5MzA5NiwwLjk1NTMzNjMyMjg2OTk1NSwwLjQ0NTMzNDMxNDgwNzk5OSwwLjAxNjE1NTE4ODUwNDI1NjgsMC4wMDgzNzQ5NzIyMTg3ODI5NCwwLjAzNTI4NDEz",
+				"MTk2NzE5NDQKMC4wMTYsMC43NTIxMjM2MTI5OTMwOTYsMC45NTUzMzYzMjI4Njk5NTUsMC40NDUzMzQzMTQ4MDc5OTksMC4wMTYxNTUxODg1MDQyNTY4LDAuMDA4Mzc0OTcyMjE4NzgyOTQsMC4wMzUyODQxMzE5",
+				"NjcxOTQ0CjAuMDE3LDAuNzUyMTIzNjEyOTkzMDk2LDAuOTU1MzM2MzIyODY5OTU1LDAuNDQ1MzM0MzE0ODA3OTk5LDAuMDE2MTU1MTg4NTA0MjU2OCwwLjAwODM3NDk3MjIxODc4Mjk0LDAuMDM1Mjg0MTMxOTY3",
+				"MTk0NAowLjAxOCwwLjc1MjEyMzYxMjk5MzA5NiwwLjk1NTMzNjMyMjg2OTk1NSwwLjQ0NTMzNDMxNDgwNzk5OSwwLjAxNjE1NTE4ODUwNDI1NjgsMC4wMDgzNzQ5NzIyMTg3ODI5NCwwLjAzNTI4NDEzMTk2NzE5",
+				"NDQKMC4wMTksMC43NTIxMjM2MTI5OTMwOTYsMC45NTUzMzYzMjI4Njk5NTUsMC40NDUzMzQzMTQ4MDc5OTksMC4wMTYxNTUxODg1MDQyNTY4LDAuMDA4Mzc0OTcyMjE4NzgyOTQsMC4wMzUyODQxMzE5NjcxOTQ0",
+				"CjAuMDIsMC43NTIxMjM2MTI5OTMwOTYsMC45NTUzMzYzMjI4Njk5NTUsMC40NDUzMzQzMTQ4MDc5OTksMC4wMTYxNTUxODg1MDQyNTY4LDAuMDA4Mzc0OTcyMjE4NzgyOTQsMC4wMzUyODQxMzE5NjcxOTQ0Cg=="
+				}),
+				Decoded = Binary.FromText(Encoded, BinaryEncoding.Base64),
+				Source = Csv.Document(Decoded, [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"cp", type number}, {"ROC", type number}, {"Sens", type number}, {"Spec", type number}, {"ROCSD", type number}, {"SensSD", type number}, {"SpecSD", type number}}, "en-GB")
+			in
+				Typed

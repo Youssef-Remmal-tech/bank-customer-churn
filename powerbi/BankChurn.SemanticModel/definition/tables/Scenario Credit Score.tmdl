@@ -1,0 +1,12 @@
+/// Credit score selector.
+table 'Scenario Credit Score'
+
+	column Value
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition 'Scenario Credit Score' = calculated
+		mode: import
+		source = GENERATESERIES(350, 850, 10)

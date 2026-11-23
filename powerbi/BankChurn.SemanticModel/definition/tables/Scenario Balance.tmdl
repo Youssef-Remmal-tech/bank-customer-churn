@@ -1,0 +1,12 @@
+/// Balance selector.
+table 'Scenario Balance'
+
+	column Value
+		dataType: int64
+		formatString: £#,##0
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition 'Scenario Balance' = calculated
+		mode: import
+		source = GENERATESERIES(0, 250000, 5000)

@@ -1,0 +1,112 @@
+/// Reference scenarios covering Female, Male, all geographies, and both active-member states.
+table 'Prediction Validation Cases'
+
+	column Case
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Case
+
+	column 'Credit Score'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: CreditScore
+
+	column Geography
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Geography
+
+	column Gender
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Gender
+
+	column Age
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Age
+
+	column Tenure
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Tenure
+
+	column Balance
+		dataType: decimal
+		formatString: £#,##0
+		summarizeBy: none
+		sourceColumn: Balance
+
+	column 'Number of Products'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: NumOfProducts
+
+	column 'Has Credit Card'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: HasCrCard
+
+	column 'Is Active Member'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: IsActiveMember
+
+	column 'Estimated Salary'
+		dataType: decimal
+		formatString: £#,##0
+		summarizeBy: none
+		sourceColumn: EstimatedSalary
+
+	column 'Task 1 Class'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Task1Class
+
+	column 'Task 1 Exit Probability'
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: Task1ExitProbability
+
+	column 'Task 2 Class'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Task2Class
+
+	column 'Task 2 Exit Probability'
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: Task2ExitProbability
+
+	partition 'Prediction Validation Cases' = m
+		mode: import
+		source =
+			let
+				Encoded = Text.Combine({
+				"IkNhc2UiLCJDcmVkaXRTY29yZSIsIkdlb2dyYXBoeSIsIkdlbmRlciIsIkFnZSIsIlRlbnVyZSIsIkJhbGFuY2UiLCJOdW1PZlByb2R1Y3RzIiwiSGFzQ3JDYXJkIiwiSXNBY3RpdmVNZW1iZXIiLCJFc3RpbWF0",
+				"ZWRTYWxhcnkiLCJUYXNrMUNsYXNzIiwiVGFzazFFeGl0UHJvYmFiaWxpdHkiLCJUYXNrMkNsYXNzIiwiVGFzazJFeGl0UHJvYmFiaWxpdHkiCiJGcmFuY2UgfCBGZW1hbGUgfCBBY3RpdmU9MCIsNjUwLCJGcmFu",
+				"Y2UiLCJGZW1hbGUiLDQwLDUsMWUrMDUsMiwiMCIsIjAiLDFlKzA1LCIwIiwwLjEwMjAyODE0NTY5NTM2NCwiTm8iLDAuMDQzNjczNDY5Mzg3NzU1MQoiR2VybWFueSB8IEZlbWFsZSB8IEFjdGl2ZT0wIiw2NTAs",
+				"Ikdlcm1hbnkiLCJGZW1hbGUiLDQwLDUsMWUrMDUsMiwiMSIsIjAiLDFlKzA1LCIwIiwwLjEwMjAyODE0NTY5NTM2NCwiTm8iLDAuMDQzNjczNDY5Mzg3NzU1MQoiU3BhaW4gfCBGZW1hbGUgfCBBY3RpdmU9MCIs",
+				"NjUwLCJTcGFpbiIsIkZlbWFsZSIsNDAsNSwxZSswNSwyLCIwIiwiMCIsMWUrMDUsIjAiLDAuMTAyMDI4MTQ1Njk1MzY0LCJObyIsMC4wNDM2NzM0NjkzODc3NTUxCiJGcmFuY2UgfCBNYWxlIHwgQWN0aXZlPTAi",
+				"LDY1MCwiRnJhbmNlIiwiTWFsZSIsNDAsNSwxZSswNSwyLCIxIiwiMCIsMWUrMDUsIjAiLDAuMTAyMDI4MTQ1Njk1MzY0LCJObyIsMC4wNDM2NzM0NjkzODc3NTUxCiJHZXJtYW55IHwgTWFsZSB8IEFjdGl2ZT0w",
+				"Iiw2NTAsIkdlcm1hbnkiLCJNYWxlIiw0MCw1LDFlKzA1LDIsIjAiLCIwIiwxZSswNSwiMCIsMC4xMDIwMjgxNDU2OTUzNjQsIk5vIiwwLjA0MzY3MzQ2OTM4Nzc1NTEKIlNwYWluIHwgTWFsZSB8IEFjdGl2ZT0w",
+				"Iiw2NTAsIlNwYWluIiwiTWFsZSIsNDAsNSwxZSswNSwyLCIxIiwiMCIsMWUrMDUsIjAiLDAuMTAyMDI4MTQ1Njk1MzY0LCJObyIsMC4wNDM2NzM0NjkzODc3NTUxCiJGcmFuY2UgfCBGZW1hbGUgfCBBY3RpdmU9",
+				"MSIsNjUwLCJGcmFuY2UiLCJGZW1hbGUiLDQwLDUsMWUrMDUsMiwiMCIsIjEiLDFlKzA1LCIwIiwwLjEwMjAyODE0NTY5NTM2NCwiTm8iLDAuMDQzNjczNDY5Mzg3NzU1MQoiR2VybWFueSB8IEZlbWFsZSB8IEFj",
+				"dGl2ZT0xIiw2NTAsIkdlcm1hbnkiLCJGZW1hbGUiLDQwLDUsMWUrMDUsMiwiMSIsIjEiLDFlKzA1LCIwIiwwLjEwMjAyODE0NTY5NTM2NCwiTm8iLDAuMDQzNjczNDY5Mzg3NzU1MQoiU3BhaW4gfCBGZW1hbGUg",
+				"fCBBY3RpdmU9MSIsNjUwLCJTcGFpbiIsIkZlbWFsZSIsNDAsNSwxZSswNSwyLCIwIiwiMSIsMWUrMDUsIjAiLDAuMTAyMDI4MTQ1Njk1MzY0LCJObyIsMC4wNDM2NzM0NjkzODc3NTUxCiJGcmFuY2UgfCBNYWxl",
+				"IHwgQWN0aXZlPTEiLDY1MCwiRnJhbmNlIiwiTWFsZSIsNDAsNSwxZSswNSwyLCIxIiwiMSIsMWUrMDUsIjAiLDAuMTAyMDI4MTQ1Njk1MzY0LCJObyIsMC4wNDM2NzM0NjkzODc3NTUxCiJHZXJtYW55IHwgTWFs",
+				"ZSB8IEFjdGl2ZT0xIiw2NTAsIkdlcm1hbnkiLCJNYWxlIiw0MCw1LDFlKzA1LDIsIjAiLCIxIiwxZSswNSwiMCIsMC4xMDIwMjgxNDU2OTUzNjQsIk5vIiwwLjA0MzY3MzQ2OTM4Nzc1NTEKIlNwYWluIHwgTWFs",
+				"ZSB8IEFjdGl2ZT0xIiw2NTAsIlNwYWluIiwiTWFsZSIsNDAsNSwxZSswNSwyLCIxIiwiMSIsMWUrMDUsIjAiLDAuMTAyMDI4MTQ1Njk1MzY0LCJObyIsMC4wNDM2NzM0NjkzODc3NTUxCg=="
+				}),
+				Decoded = Binary.FromText(Encoded, BinaryEncoding.Base64),
+				Source = Csv.Document(Decoded, [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"Case", type text}, {"CreditScore", Int64.Type}, {"Geography", type text}, {"Gender", type text}, {"Age", Int64.Type}, {"Tenure", Int64.Type}, {"Balance", type number}, {"NumOfProducts", Int64.Type}, {"HasCrCard", type text}, {"IsActiveMember", type text}, {"EstimatedSalary", type number}, {"Task1Class", type text}, {"Task1ExitProbability", type number}, {"Task2Class", type text}, {"Task2ExitProbability", type number}}, "en-GB")
+			in
+				Typed

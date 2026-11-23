@@ -1,0 +1,187 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "1df3d45e27676c16268b",
+  "position": {
+    "x": 20,
+    "y": 470,
+    "z": 8000,
+    "height": 220,
+    "width": 590,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CP Tuning"
+                    }
+                  },
+                  "Property": "Complexity Parameter"
+                }
+              },
+              "queryRef": "CP Tuning.Complexity Parameter",
+              "nativeQueryRef": "Complexity Parameter",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "CP Tuning"
+                        }
+                      },
+                      "Property": "ROC"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(CP Tuning.ROC)",
+              "nativeQueryRef": "Max of ROC"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "CP Tuning"
+                        }
+                      },
+                      "Property": "Sensitivity"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(CP Tuning.Sensitivity)",
+              "nativeQueryRef": "Max of Sensitivity"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "CP Tuning"
+                        }
+                      },
+                      "Property": "Specificity"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(CP Tuning.Specificity)",
+              "nativeQueryRef": "Max of Specificity"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "CP Tuning"
+                  }
+                },
+                "Property": "Complexity Parameter"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Five-fold CV tuning • best cp = 0.001'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Five-fold CV tuning • best cp = 0.001'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

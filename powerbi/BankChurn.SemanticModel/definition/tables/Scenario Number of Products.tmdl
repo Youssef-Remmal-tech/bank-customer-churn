@@ -1,0 +1,12 @@
+/// Number of products selector.
+table 'Scenario Number of Products'
+
+	column Value
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition 'Scenario Number of Products' = calculated
+		mode: import
+		source = GENERATESERIES(1, 4, 1)

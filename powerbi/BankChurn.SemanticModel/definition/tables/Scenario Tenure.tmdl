@@ -1,0 +1,12 @@
+/// Tenure selector.
+table 'Scenario Tenure'
+
+	column Value
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition 'Scenario Tenure' = calculated
+		mode: import
+		source = GENERATESERIES(0, 10, 1)

@@ -1,0 +1,13 @@
+"Case","CreditScore","Geography","Gender","Age","Tenure","Balance","NumOfProducts","HasCrCard","IsActiveMember","EstimatedSalary","Task1Class","Task1ExitProbability","Task2Class","Task2ExitProbability"
+"France | Female | Active=0",650,"France","Female",40,5,1e+05,2,"0","0",1e+05,"0",0.102028145695364,"No",0.0436734693877551
+"Germany | Female | Active=0",650,"Germany","Female",40,5,1e+05,2,"1","0",1e+05,"0",0.102028145695364,"No",0.0436734693877551
+"Spain | Female | Active=0",650,"Spain","Female",40,5,1e+05,2,"0","0",1e+05,"0",0.102028145695364,"No",0.0436734693877551
+"France | Male | Active=0",650,"France","Male",40,5,1e+05,2,"1","0",1e+05,"0",0.102028145695364,"No",0.0436734693877551
+"Germany | Male | Active=0",650,"Germany","Male",40,5,1e+05,2,"0","0",1e+05,"0",0.102028145695364,"No",0.0436734693877551
+"Spain | Male | Active=0",650,"Spain","Male",40,5,1e+05,2,"1","0",1e+05,"0",0.102028145695364,"No",0.0436734693877551
+"France | Female | Active=1",650,"France","Female",40,5,1e+05,2,"0","1",1e+05,"0",0.102028145695364,"No",0.0436734693877551
+"Germany | Female | Active=1",650,"Germany","Female",40,5,1e+05,2,"1","1",1e+05,"0",0.102028145695364,"No",0.0436734693877551
+"Spain | Female | Active=1",650,"Spain","Female",40,5,1e+05,2,"0","1",1e+05,"0",0.102028145695364,"No",0.0436734693877551
+"France | Male | Active=1",650,"France","Male",40,5,1e+05,2,"1","1",1e+05,"0",0.102028145695364,"No",0.0436734693877551
+"Germany | Male | Active=1",650,"Germany","Male",40,5,1e+05,2,"0","1",1e+05,"0",0.102028145695364,"No",0.0436734693877551
+"Spain | Male | Active=1",650,"Spain","Male",40,5,1e+05,2,"1","1",1e+05,"0",0.102028145695364,"No",0.0436734693877551

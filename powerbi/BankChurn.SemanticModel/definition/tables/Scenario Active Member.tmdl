@@ -1,0 +1,11 @@
+/// Active-member category selector.
+table 'Scenario Active Member'
+
+	column 'Is Active Member'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: [Is Active Member]
+
+	partition 'Scenario Active Member' = calculated
+		mode: import
+		source = DATATABLE("Is Active Member", STRING, {{"0"}, {"1"}})

@@ -1,0 +1,148 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "60d0f56ba2e432d40a09",
+  "position": {
+    "x": 650,
+    "y": 75,
+    "z": 5000,
+    "height": 125,
+    "width": 610,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Model Comparison"
+                    }
+                  },
+                  "Property": "Task 2 Accuracy"
+                }
+              },
+              "queryRef": "Model Comparison.Task 2 Accuracy",
+              "nativeQueryRef": "Task 2 Accuracy"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Model Comparison"
+                    }
+                  },
+                  "Property": "Task 2 AUC"
+                }
+              },
+              "queryRef": "Model Comparison.Task 2 AUC",
+              "nativeQueryRef": "Task 2 AUC"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Model Comparison"
+                    }
+                  },
+                  "Property": "Task 2 Recall"
+                }
+              },
+              "queryRef": "Model Comparison.Task 2 Recall",
+              "nativeQueryRef": "Task 2 Recall"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Model Comparison"
+                    }
+                  },
+                  "Property": "Task 2 Precision"
+                }
+              },
+              "queryRef": "Model Comparison.Task 2 Precision",
+              "nativeQueryRef": "Task 2 Precision"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Task 2 • AI-enhanced tuned tree'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Task 2 • AI-enhanced tuned tree'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

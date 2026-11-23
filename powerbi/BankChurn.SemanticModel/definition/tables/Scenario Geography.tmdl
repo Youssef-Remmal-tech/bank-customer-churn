@@ -1,0 +1,11 @@
+/// Categorical geography selector preserving the model factor levels.
+table 'Scenario Geography'
+
+	column Geography
+		dataType: string
+		summarizeBy: none
+		sourceColumn: [Geography]
+
+	partition 'Scenario Geography' = calculated
+		mode: import
+		source = DATATABLE("Geography", STRING, {{"France"}, {"Germany"}, {"Spain"}})

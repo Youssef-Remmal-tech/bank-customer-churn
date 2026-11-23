@@ -1,0 +1,91 @@
+/// Held-out test metrics for the selected Task 1 and Task 2 classification trees.
+table 'Model Comparison'
+
+	/// Accuracy on the held-out 30% test split for Task 1 - Full Decision Tree.
+	measure 'Task 1 Accuracy' = MAXX(FILTER('Model Comparison', 'Model Comparison'[Model] = "Task 1 - Full Decision Tree"), 'Model Comparison'[Accuracy])
+		formatString: 0.0%
+
+	/// AUC on the held-out 30% test split for Task 1 - Full Decision Tree.
+	measure 'Task 1 AUC' = MAXX(FILTER('Model Comparison', 'Model Comparison'[Model] = "Task 1 - Full Decision Tree"), 'Model Comparison'[AUC])
+		formatString: 0.0%
+
+	/// Recall on the held-out 30% test split for Task 1 - Full Decision Tree.
+	measure 'Task 1 Recall' = MAXX(FILTER('Model Comparison', 'Model Comparison'[Model] = "Task 1 - Full Decision Tree"), 'Model Comparison'[Recall])
+		formatString: 0.0%
+
+	/// Precision on the held-out 30% test split for Task 1 - Full Decision Tree.
+	measure 'Task 1 Precision' = MAXX(FILTER('Model Comparison', 'Model Comparison'[Model] = "Task 1 - Full Decision Tree"), 'Model Comparison'[Precision])
+		formatString: 0.0%
+
+	/// Accuracy on the held-out 30% test split for Task 2 - AI Enhanced Tuned Tree.
+	measure 'Task 2 Accuracy' = MAXX(FILTER('Model Comparison', 'Model Comparison'[Model] = "Task 2 - AI Enhanced Tuned Tree"), 'Model Comparison'[Accuracy])
+		formatString: 0.0%
+
+	/// AUC on the held-out 30% test split for Task 2 - AI Enhanced Tuned Tree.
+	measure 'Task 2 AUC' = MAXX(FILTER('Model Comparison', 'Model Comparison'[Model] = "Task 2 - AI Enhanced Tuned Tree"), 'Model Comparison'[AUC])
+		formatString: 0.0%
+
+	/// Recall on the held-out 30% test split for Task 2 - AI Enhanced Tuned Tree.
+	measure 'Task 2 Recall' = MAXX(FILTER('Model Comparison', 'Model Comparison'[Model] = "Task 2 - AI Enhanced Tuned Tree"), 'Model Comparison'[Recall])
+		formatString: 0.0%
+
+	/// Precision on the held-out 30% test split for Task 2 - AI Enhanced Tuned Tree.
+	measure 'Task 2 Precision' = MAXX(FILTER('Model Comparison', 'Model Comparison'[Model] = "Task 2 - AI Enhanced Tuned Tree"), 'Model Comparison'[Precision])
+		formatString: 0.0%
+
+	column Model
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Model
+
+	column Accuracy
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: Accuracy
+
+	column AUC
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: AUC
+
+	column Recall
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: Recall
+
+	column Precision
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: Precision
+
+	column Specificity
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: Specificity
+
+	column 'Balanced Accuracy'
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: BalancedAccuracy
+
+	partition 'Model Comparison' = m
+		mode: import
+		source =
+			let
+				Encoded = Text.Combine({
+				"Ik1vZGVsIiwiQWNjdXJhY3kiLCJBVUMiLCJSZWNhbGwiLCJQcmVjaXNpb24iLCJTcGVjaWZpY2l0eSIsIkJhbGFuY2VkQWNjdXJhY3kiCiJUYXNrIDEgLSBGdWxsIERlY2lzaW9uIFRyZWUiLDAuODYyNjIwODcz",
+				"NjI0NTQyLDAuNzU1Nzc1OTQ3Mzg1NTkxLDAuNDA0MjU1MzE5MTQ4OTM2LDAuODM3Mjg4MTM1NTkzMjIxLDAuOTc5ODk5NDk3NDg3NDM3LDAuNjkyMDc3NDA4MzE4MTg3CiJUYXNrIDIgLSBBSSBFbmhhbmNlZCBU",
+				"dW5lZCBUcmVlIiwwLjg2MDI4Njc2MjI1NDA4NSwwLjgzOTI5ODA5OTg4MjkzOSwwLjQ5MDk5ODM2MzMzODc4OSwwLjczNTI5NDExNzY0NzA1OSwwLjk1NDc3Mzg2OTM0NjczNCwwLjcyMjg4NjExNjM0Mjc2MQo="
+				}),
+				Decoded = Binary.FromText(Encoded, BinaryEncoding.Base64),
+				Source = Csv.Document(Decoded, [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"Model", type text}, {"Accuracy", type number}, {"AUC", type number}, {"Recall", type number}, {"Precision", type number}, {"Specificity", type number}, {"BalancedAccuracy", type number}}, "en-GB")
+			in
+				Typed

@@ -1,0 +1,62 @@
+{
+  "name": "BangorBank-2dbb99972a.json",
+  "dataColors": [
+    "#2F5597",
+    "#E85D75",
+    "#2E7D6E",
+    "#F2B134",
+    "#6F4E7C",
+    "#7A8B99"
+  ],
+  "background": "#F5F7FA",
+  "foreground": "#26364A",
+  "tableAccent": "#2F5597",
+  "good": "#2E7D6E",
+  "neutral": "#F2B134",
+  "bad": "#C43C4E",
+  "visualStyles": {
+    "*": {
+      "*": {
+        "title": [
+          {
+            "show": true,
+            "fontFamily": "Segoe UI Semibold",
+            "fontSize": 12,
+            "fontColor": {
+              "solid": {
+                "color": "#26364A"
+              }
+            }
+          }
+        ],
+        "background": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#D9E1EA"
+              }
+            },
+            "radius": 8
+          }
+        ],
+        "visualHeader": [
+          {
+            "show": true
+          }
+        ]
+      }
+    }
+  }
+}

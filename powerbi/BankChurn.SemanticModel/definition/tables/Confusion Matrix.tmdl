@@ -1,0 +1,40 @@
+/// Held-out test confusion-matrix cell counts for both models.
+table 'Confusion Matrix'
+
+	column Model
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Model
+
+	column Prediction
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Prediction
+
+	column Reference
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Reference
+
+	column Count
+		dataType: int64
+		formatString: #,##0
+		summarizeBy: none
+		sourceColumn: Count
+
+	partition 'Confusion Matrix' = m
+		mode: import
+		source =
+			let
+				Encoded = Text.Combine({
+				"Ik1vZGVsIiwiUHJlZGljdGlvbiIsIlJlZmVyZW5jZSIsIkNvdW50IgoiVGFzayAxIC0gRnVsbCBEZWNpc2lvbiBUcmVlIiwiMCIsIjAiLDIzNDAKIlRhc2sgMSAtIEZ1bGwgRGVjaXNpb24gVHJlZSIsIjEiLCIw",
+				"Iiw0OAoiVGFzayAxIC0gRnVsbCBEZWNpc2lvbiBUcmVlIiwiMCIsIjEiLDM2NAoiVGFzayAxIC0gRnVsbCBEZWNpc2lvbiBUcmVlIiwiMSIsIjEiLDI0NwoiVGFzayAyIC0gQUkgRW5oYW5jZWQgVHVuZWQgVHJl",
+				"ZSIsIk5vIiwiTm8iLDIyODAKIlRhc2sgMiAtIEFJIEVuaGFuY2VkIFR1bmVkIFRyZWUiLCJZZXMiLCJObyIsMTA4CiJUYXNrIDIgLSBBSSBFbmhhbmNlZCBUdW5lZCBUcmVlIiwiTm8iLCJZZXMiLDMxMQoiVGFz",
+				"ayAyIC0gQUkgRW5oYW5jZWQgVHVuZWQgVHJlZSIsIlllcyIsIlllcyIsMzAwCg=="
+				}),
+				Decoded = Binary.FromText(Encoded, BinaryEncoding.Base64),
+				Source = Csv.Document(Decoded, [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"Model", type text}, {"Prediction", type text}, {"Reference", type text}, {"Count", Int64.Type}}, "en-GB")
+			in
+				Typed

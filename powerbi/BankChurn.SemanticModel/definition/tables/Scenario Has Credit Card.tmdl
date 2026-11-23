@@ -1,0 +1,11 @@
+/// Credit-card category selector.
+table 'Scenario Has Credit Card'
+
+	column 'Has Credit Card'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: [Has Credit Card]
+
+	partition 'Scenario Has Credit Card' = calculated
+		mode: import
+		source = DATATABLE("Has Credit Card", STRING, {{"0"}, {"1"}})

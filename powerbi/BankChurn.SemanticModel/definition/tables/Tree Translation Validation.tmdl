@@ -1,0 +1,45 @@
+/// Independent row-level comparison between the R models and the generated native DAX tree scorers.
+table 'Tree Translation Validation'
+
+	column Model
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Model
+
+	column 'Rows Checked'
+		dataType: int64
+		formatString: #,##0
+		summarizeBy: none
+		sourceColumn: RowsChecked
+
+	column 'Maximum Absolute Difference'
+		dataType: decimal
+		formatString: 0.000000000000
+		summarizeBy: none
+		sourceColumn: MaxAbsoluteDifference
+
+	column 'Exact Mismatch Count'
+		dataType: int64
+		formatString: #,##0
+		summarizeBy: none
+		sourceColumn: ExactMismatchCount
+
+	column Status
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Status
+
+	partition 'Tree Translation Validation' = m
+		mode: import
+		source =
+			let
+				Encoded = Text.Combine({
+				"Ik1vZGVsIiwiUm93c0NoZWNrZWQiLCJNYXhBYnNvbHV0ZURpZmZlcmVuY2UiLCJFeGFjdE1pc21hdGNoQ291bnQiLCJTdGF0dXMiCiJUYXNrIDEgLSBGdWxsIERlY2lzaW9uIFRyZWUiLDEwMDAwLDAsMCwiUEFT",
+				"UyIKIlRhc2sgMiAtIEFJIEVuaGFuY2VkIFR1bmVkIFRyZWUiLDEwMDAwLDAsMCwiUEFTUyIK"
+				}),
+				Decoded = Binary.FromText(Encoded, BinaryEncoding.Base64),
+				Source = Csv.Document(Decoded, [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"Model", type text}, {"RowsChecked", Int64.Type}, {"MaxAbsoluteDifference", type number}, {"ExactMismatchCount", Int64.Type}, {"Status", type text}}, "en-GB")
+			in
+				Typed

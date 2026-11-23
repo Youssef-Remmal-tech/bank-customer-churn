@@ -1,0 +1,188 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "e10fefdbc06d6985afaa",
+  "position": {
+    "x": 20,
+    "y": 220,
+    "z": 6000,
+    "height": 230,
+    "width": 390,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Model Comparison"
+                    }
+                  },
+                  "Property": "Model"
+                }
+              },
+              "queryRef": "Model Comparison.Model",
+              "nativeQueryRef": "Model",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Model Comparison"
+                        }
+                      },
+                      "Property": "Accuracy"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(Model Comparison.Accuracy)",
+              "nativeQueryRef": "Max of Accuracy"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Model Comparison"
+                        }
+                      },
+                      "Property": "AUC"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(Model Comparison.AUC)",
+              "nativeQueryRef": "Max of AUC"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Model Comparison"
+                        }
+                      },
+                      "Property": "Recall"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(Model Comparison.Recall)",
+              "nativeQueryRef": "Max of Recall"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Model Comparison"
+                        }
+                      },
+                      "Property": "Precision"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(Model Comparison.Precision)",
+              "nativeQueryRef": "Max of Precision"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Held-out metric comparison'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Held-out metric comparison'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

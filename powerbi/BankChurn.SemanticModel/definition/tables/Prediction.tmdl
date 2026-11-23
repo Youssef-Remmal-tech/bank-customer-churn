@@ -1,0 +1,404 @@
+/// Measures for interactive scoring with the exact decision-tree split rules.
+table Prediction
+
+	/// Exact full-tree exit probability using categorical Gender, Geography, Has Credit Card, and Is Active Member selections.
+	measure 'Task 1 Exit Probability' = ```
+		VAR _CreditScore = SELECTEDVALUE('Scenario Credit Score'[Value], 650)
+		VAR _Geography = SELECTEDVALUE('Scenario Geography'[Geography], "France")
+		VAR _Gender = SELECTEDVALUE('Scenario Gender'[Gender], "Female")
+		VAR _Age = SELECTEDVALUE('Scenario Age'[Value], 40)
+		VAR _Tenure = SELECTEDVALUE('Scenario Tenure'[Value], 5)
+		VAR _Balance = SELECTEDVALUE('Scenario Balance'[Value], 100000)
+		VAR _NumOfProducts = SELECTEDVALUE('Scenario Number of Products'[Value], 2)
+		VAR _HasCrCard = SELECTEDVALUE('Scenario Has Credit Card'[Has Credit Card], "0")
+		VAR _IsActiveMember = SELECTEDVALUE('Scenario Active Member'[Is Active Member], "0")
+		VAR _EstimatedSalary = SELECTEDVALUE('Scenario Estimated Salary'[Value], 100000)
+		VAR _GeographyGermany = IF(_Geography = "Germany", 1, 0)
+		VAR _GeographySpain = IF(_Geography = "Spain", 1, 0)
+		VAR _GenderMale = IF(_Gender = "Male", 1, 0)
+		VAR _HasCrCard1 = VALUE(_HasCrCard)
+		VAR _IsActiveMember1 = VALUE(_IsActiveMember)
+		RETURN
+		IF(
+		    _Age < 42.5,
+		    IF(
+		            _NumOfProducts < 2.5,
+		            0.102028145695364,
+		            0.729508196721312
+		        ),
+		    IF(
+		            _IsActiveMember = "1",
+		            IF(
+		                        _NumOfProducts < 2.5,
+		                        0.237793851717902,
+		                        0.936170212765957
+		                    ),
+		            IF(
+		                        _Age < 50.5,
+		                        IF(
+		                                        _NumOfProducts >= 1.5,
+		                                        IF(
+		                                                            _NumOfProducts < 2.5,
+		                                                            0.188775510204082,
+		                                                            1.000000000000000
+		                                                        ),
+		                                        IF(
+		                                                            _Geography IN {"France", "Spain"},
+		                                                            IF(
+		                                                                                    _Balance >= 39557.315000000002328,
+		                                                                                    0.408284023668639,
+		                                                                                    0.686746987951807
+		                                                                                ),
+		                                                            0.798387096774194
+		                                                        )
+		                                    ),
+		                        0.835087719298246
+		                    )
+		        )
+		)
+		```
+		formatString: 0.0%
+
+	/// Task 1 class at a 0.5 probability threshold.
+	measure 'Task 1 Prediction' = IF([Task 1 Exit Probability] >= 0.5, "Exit", "Stay")
+		formatString: General
+
+	/// Exact tuned-tree exit probability; categorical selections are converted to the one-hot inputs used by caret.
+	measure 'Task 2 Exit Probability' = ```
+		VAR _CreditScore = SELECTEDVALUE('Scenario Credit Score'[Value], 650)
+		VAR _Geography = SELECTEDVALUE('Scenario Geography'[Geography], "France")
+		VAR _Gender = SELECTEDVALUE('Scenario Gender'[Gender], "Female")
+		VAR _Age = SELECTEDVALUE('Scenario Age'[Value], 40)
+		VAR _Tenure = SELECTEDVALUE('Scenario Tenure'[Value], 5)
+		VAR _Balance = SELECTEDVALUE('Scenario Balance'[Value], 100000)
+		VAR _NumOfProducts = SELECTEDVALUE('Scenario Number of Products'[Value], 2)
+		VAR _HasCrCard = SELECTEDVALUE('Scenario Has Credit Card'[Has Credit Card], "0")
+		VAR _IsActiveMember = SELECTEDVALUE('Scenario Active Member'[Is Active Member], "0")
+		VAR _EstimatedSalary = SELECTEDVALUE('Scenario Estimated Salary'[Value], 100000)
+		VAR _GeographyGermany = IF(_Geography = "Germany", 1, 0)
+		VAR _GeographySpain = IF(_Geography = "Spain", 1, 0)
+		VAR _GenderMale = IF(_Gender = "Male", 1, 0)
+		VAR _HasCrCard1 = VALUE(_HasCrCard)
+		VAR _IsActiveMember1 = VALUE(_IsActiveMember)
+		RETURN
+		IF(
+		    _Age < 42.5,
+		    IF(
+		            _NumOfProducts < 2.5,
+		            IF(
+		                        _NumOfProducts >= 1.5,
+		                        0.043673469387755,
+		                        IF(
+		                                        _Age < 39.5,
+		                                        IF(
+		                                                            _GeographyGermany < 0.5,
+		                                                            0.112967914438503,
+		                                                            IF(
+		                                                                                    _Balance < 100042.214999999996508,
+		                                                                                    0.061224489795918,
+		                                                                                    IF(
+		                                                                                                                _Balance >= 142061.005000000004657,
+		                                                                                                                0.123809523809524,
+		                                                                                                                IF(
+		                                                                                                                                                _GenderMale >= 0.5,
+		                                                                                                                                                IF(
+		                                                                                                                                                                                    _Age < 34.5,
+		                                                                                                                                                                                    0.147727272727273,
+		                                                                                                                                                                                    IF(
+		                                                                                                                                                                                                                            _Tenure >= 1.5,
+		                                                                                                                                                                                                                            0.282608695652174,
+		                                                                                                                                                                                                                            0.636363636363636
+		                                                                                                                                                                                                                        )
+		                                                                                                                                                                                ),
+		                                                                                                                                                IF(
+		                                                                                                                                                                                    _EstimatedSalary >= 73949.970000000001164,
+		                                                                                                                                                                                    IF(
+		                                                                                                                                                                                                                            _Balance >= 116069.494999999995343,
+		                                                                                                                                                                                                                            0.181818181818182,
+		                                                                                                                                                                                                                            IF(
+		                                                                                                                                                                                                                                                                        _CreditScore >= 606.5,
+		                                                                                                                                                                                                                                                                        0.400000000000000,
+		                                                                                                                                                                                                                                                                        0.750000000000000
+		                                                                                                                                                                                                                                                                    )
+		                                                                                                                                                                                                                        ),
+		                                                                                                                                                                                    IF(
+		                                                                                                                                                                                                                            _EstimatedSalary < 7161.555000000000291,
+		                                                                                                                                                                                                                            0.142857142857143,
+		                                                                                                                                                                                                                            IF(
+		                                                                                                                                                                                                                                                                        _Tenure < 4.5,
+		                                                                                                                                                                                                                                                                        0.421052631578947,
+		                                                                                                                                                                                                                                                                        0.750000000000000
+		                                                                                                                                                                                                                                                                    )
+		                                                                                                                                                                                                                        )
+		                                                                                                                                                                                )
+		                                                                                                                                            )
+		                                                                                                            )
+		                                                                                )
+		                                                        ),
+		                                        IF(
+		                                                            _IsActiveMember1 >= 0.5,
+		                                                            0.181372549019608,
+		                                                            IF(
+		                                                                                    _Balance >= 55328.309999999997672,
+		                                                                                    IF(
+		                                                                                                                _Balance < 169361.785000000003492,
+		                                                                                                                IF(
+		                                                                                                                                                _CreditScore >= 763.5,
+		                                                                                                                                                0.050000000000000,
+		                                                                                                                                                IF(
+		                                                                                                                                                                                    _Tenure >= 1.5,
+		                                                                                                                                                                                    IF(
+		                                                                                                                                                                                                                            _Balance >= 152921.165000000008149,
+		                                                                                                                                                                                                                            0.000000000000000,
+		                                                                                                                                                                                                                            IF(
+		                                                                                                                                                                                                                                                                        _Balance < 144293.294999999983702,
+		                                                                                                                                                                                                                                                                        IF(
+		                                                                                                                                                                                                                                                                                                                        _EstimatedSalary < 111001.714999999996508,
+		                                                                                                                                                                                                                                                                                                                        0.166666666666667,
+		                                                                                                                                                                                                                                                                                                                        IF(
+		                                                                                                                                                                                                                                                                                                                                                                            _EstimatedSalary >= 142993.880000000004657,
+		                                                                                                                                                                                                                                                                                                                                                                            0.235294117647059,
+		                                                                                                                                                                                                                                                                                                                                                                            0.578947368421053
+		                                                                                                                                                                                                                                                                                                                                                                        )
+		                                                                                                                                                                                                                                                                                                                    ),
+		                                                                                                                                                                                                                                                                        0.875000000000000
+		                                                                                                                                                                                                                                                                    )
+		                                                                                                                                                                                                                        ),
+		                                                                                                                                                                                    0.526315789473684
+		                                                                                                                                                                                )
+		                                                                                                                                            ),
+		                                                                                                                0.857142857142857
+		                                                                                                            ),
+		                                                                                    IF(
+		                                                                                                                _CreditScore < 631,
+		                                                                                                                0.285714285714286,
+		                                                                                                                0.689655172413793
+		                                                                                                            )
+		                                                                                )
+		                                                        )
+		                                    )
+		                    ),
+		            IF(
+		                        _Balance < 57003.365000000005239,
+		                        IF(
+		                                        _EstimatedSalary < 132695.489999999990687,
+		                                        0.368421052631579,
+		                                        0.857142857142857
+		                                    ),
+		                        0.900000000000000
+		                    )
+		        ),
+		    IF(
+		            _IsActiveMember1 >= 0.5,
+		            IF(
+		                        _NumOfProducts < 2.5,
+		                        IF(
+		                                        _NumOfProducts >= 1.5,
+		                                        0.118609406952965,
+		                                        IF(
+		                                                            _Age >= 57.5,
+		                                                            0.156565656565657,
+		                                                            IF(
+		                                                                                    _GeographyGermany < 0.5,
+		                                                                                    IF(
+		                                                                                                                _Balance >= 20342.959999999999127,
+		                                                                                                                IF(
+		                                                                                                                                                _CreditScore >= 643,
+		                                                                                                                                                0.196850393700787,
+		                                                                                                                                                IF(
+		                                                                                                                                                                                    _EstimatedSalary < 140530.100000000005821,
+		                                                                                                                                                                                    IF(
+		                                                                                                                                                                                                                            _Tenure >= 4.5,
+		                                                                                                                                                                                                                            0.176470588235294,
+		                                                                                                                                                                                                                            IF(
+		                                                                                                                                                                                                                                                                        _EstimatedSalary >= 37750.375,
+		                                                                                                                                                                                                                                                                        0.333333333333333,
+		                                                                                                                                                                                                                                                                        0.714285714285714
+		                                                                                                                                                                                                                                                                    )
+		                                                                                                                                                                                                                        ),
+		                                                                                                                                                                                    0.578947368421053
+		                                                                                                                                                                                )
+		                                                                                                                                            ),
+		                                                                                                                IF(
+		                                                                                                                                                _Age < 44.5,
+		                                                                                                                                                0.200000000000000,
+		                                                                                                                                                IF(
+		                                                                                                                                                                                    _Age >= 52.5,
+		                                                                                                                                                                                    0.375000000000000,
+		                                                                                                                                                                                    0.693877551020408
+		                                                                                                                                                                                )
+		                                                                                                                                            )
+		                                                                                                            ),
+		                                                                                    IF(
+		                                                                                                                _Balance < 88564.360000000000582,
+		                                                                                                                0.125000000000000,
+		                                                                                                                IF(
+		                                                                                                                                                _Balance >= 134552.76500000001397,
+		                                                                                                                                                IF(
+		                                                                                                                                                                                    _CreditScore < 688,
+		                                                                                                                                                                                    0.277777777777778,
+		                                                                                                                                                                                    0.636363636363636
+		                                                                                                                                                                                ),
+		                                                                                                                                                IF(
+		                                                                                                                                                                                    _Tenure >= 5.5,
+		                                                                                                                                                                                    IF(
+		                                                                                                                                                                                                                            _CreditScore >= 684.5,
+		                                                                                                                                                                                                                            0.300000000000000,
+		                                                                                                                                                                                                                            IF(
+		                                                                                                                                                                                                                                                                        _CreditScore < 592.5,
+		                                                                                                                                                                                                                                                                        0.285714285714286,
+		                                                                                                                                                                                                                                                                        0.882352941176471
+		                                                                                                                                                                                                                                                                    )
+		                                                                                                                                                                                                                        ),
+		                                                                                                                                                                                    0.803921568627451
+		                                                                                                                                                                                )
+		                                                                                                                                            )
+		                                                                                                            )
+		                                                                                )
+		                                                        )
+		                                    ),
+		                        0.936170212765957
+		                    ),
+		            IF(
+		                        _Age < 50.5,
+		                        IF(
+		                                        _NumOfProducts >= 1.5,
+		                                        IF(
+		                                                            _NumOfProducts < 2.5,
+		                                                            IF(
+		                                                                                    _Balance < 91103.410000000003492,
+		                                                                                    0.111111111111111,
+		                                                                                    IF(
+		                                                                                                                _Tenure >= 1.5,
+		                                                                                                                IF(
+		                                                                                                                                                _EstimatedSalary >= 64790.055000000000291,
+		                                                                                                                                                0.148936170212766,
+		                                                                                                                                                IF(
+		                                                                                                                                                                                    _EstimatedSalary < 44491.529999999998836,
+		                                                                                                                                                                                    0.312500000000000,
+		                                                                                                                                                                                    0.857142857142857
+		                                                                                                                                                                                )
+		                                                                                                                                            ),
+		                                                                                                                0.666666666666667
+		                                                                                                            )
+		                                                                                ),
+		                                                            1.000000000000000
+		                                                        ),
+		                                        IF(
+		                                                            _GeographyGermany < 0.5,
+		                                                            IF(
+		                                                                                    _Balance >= 39557.315000000002328,
+		                                                                                    IF(
+		                                                                                                                _Tenure >= 5.5,
+		                                                                                                                IF(
+		                                                                                                                                                _CreditScore >= 590.5,
+		                                                                                                                                                IF(
+		                                                                                                                                                                                    _Balance < 164777.309999999997672,
+		                                                                                                                                                                                    0.150943396226415,
+		                                                                                                                                                                                    0.714285714285714
+		                                                                                                                                                                                ),
+		                                                                                                                                                IF(
+		                                                                                                                                                                                    _Tenure < 7.5,
+		                                                                                                                                                                                    0.300000000000000,
+		                                                                                                                                                                                    0.642857142857143
+		                                                                                                                                                                                )
+		                                                                                                                                            ),
+		                                                                                                                IF(
+		                                                                                                                                                _EstimatedSalary < 72476.179999999993015,
+		                                                                                                                                                0.303030303030303,
+		                                                                                                                                                IF(
+		                                                                                                                                                                                    _Balance >= 92965.024999999994179,
+		                                                                                                                                                                                    IF(
+		                                                                                                                                                                                                                            _Balance < 103754.975000000005821,
+		                                                                                                                                                                                                                            0.125000000000000,
+		                                                                                                                                                                                                                            IF(
+		                                                                                                                                                                                                                                                                        _Age < 44.5,
+		                                                                                                                                                                                                                                                                        0.400000000000000,
+		                                                                                                                                                                                                                                                                        0.791666666666667
+		                                                                                                                                                                                                                                                                    )
+		                                                                                                                                                                                                                        ),
+		                                                                                                                                                                                    1.000000000000000
+		                                                                                                                                                                                )
+		                                                                                                                                            )
+		                                                                                                            ),
+		                                                                                    IF(
+		                                                                                                                _Age < 44.5,
+		                                                                                                                0.312500000000000,
+		                                                                                                                0.776119402985075
+		                                                                                                            )
+		                                                                                ),
+		                                                            IF(
+		                                                                                    _Age < 45.5,
+		                                                                                    IF(
+		                                                                                                                _CreditScore < 565,
+		                                                                                                                0.333333333333333,
+		                                                                                                                0.794871794871795
+		                                                                                                            ),
+		                                                                                    0.876712328767123
+		                                                                                )
+		                                                        )
+		                                    ),
+		                        IF(
+		                                        _Age >= 72.5,
+		                                        0.142857142857143,
+		                                        IF(
+		                                                            _NumOfProducts >= 1.5,
+		                                                            IF(
+		                                                                                    _NumOfProducts < 2.5,
+		                                                                                    IF(
+		                                                                                                                _CreditScore >= 661.5,
+		                                                                                                                IF(
+		                                                                                                                                                _CreditScore < 714.5,
+		                                                                                                                                                0.100000000000000,
+		                                                                                                                                                0.764705882352941
+		                                                                                                                                            ),
+		                                                                                                                0.777777777777778
+		                                                                                                            ),
+		                                                                                    1.000000000000000
+		                                                                                ),
+		                                                            0.892473118279570
+		                                                        )
+		                                    )
+		                    )
+		        )
+		)
+		```
+		formatString: 0.0%
+
+	/// Task 2 class at a 0.5 probability threshold.
+	measure 'Task 2 Prediction' = IF([Task 2 Exit Probability] >= 0.5, "Exit", "Stay")
+		formatString: General
+
+	/// Whether both trees return the same class.
+	measure 'Model Agreement' = IF([Task 1 Prediction] = [Task 2 Prediction], "Models agree", "Models disagree")
+		formatString: General
+
+	/// Task 2 probability minus Task 1 probability.
+	measure 'Probability Difference' = [Task 2 Exit Probability] - [Task 1 Exit Probability]
+		formatString: +0.0%;-0.0%;0.0%
+
+	/// Readable summary of the current scenario selectors and their default values.
+	measure 'Selected Scenario' = ```
+		VAR _CreditScore = SELECTEDVALUE('Scenario Credit Score'[Value], 650)
+		VAR _Geography = SELECTEDVALUE('Scenario Geography'[Geography], "France")
+		VAR _Gender = SELECTEDVALUE('Scenario Gender'[Gender], "Female")
+		VAR _Age = SELECTEDVALUE('Scenario Age'[Value], 40)
+		VAR _Tenure = SELECTEDVALUE('Scenario Tenure'[Value], 5)
+		VAR _Balance = SELECTEDVALUE('Scenario Balance'[Value], 100000)
+		VAR _Products = SELECTEDVALUE('Scenario Number of Products'[Value], 2)
+		VAR _Card = SELECTEDVALUE('Scenario Has Credit Card'[Has Credit Card], "0")
+		VAR _Active = SELECTEDVALUE('Scenario Active Member'[Is Active Member], "0")
+		VAR _Salary = SELECTEDVALUE('Scenario Estimated Salary'[Value], 100000)
+		RETURN
+		"Credit " & FORMAT(_CreditScore, "0") & " | " & _Geography & " | " & _Gender & " | Age " & FORMAT(_Age, "0") & " | Tenure " & FORMAT(_Tenure, "0") & " | Balance " & FORMAT(_Balance, "£#,##0") & " | Products " & FORMAT(_Products, "0") & " | Card " & _Card & " | Active " & _Active & " | Salary " & FORMAT(_Salary, "£#,##0")
+		```
+		formatString: General
+
+	column Prediction
+		dataType: string
+		summarizeBy: none
+		sourceColumn: [Prediction]
+
+	partition Prediction = calculated
+		mode: import
+		source = ROW("Prediction", "Current scenario")

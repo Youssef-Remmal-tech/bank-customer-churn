@@ -1,0 +1,57 @@
+/// Regression tests proving categorical and numeric input routes agree for Female and Male.
+table 'Factor Regression Tests'
+
+	column Gender
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Gender
+
+	column 'Task 1 Categorical Probability'
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: CanonicalTask1Probability
+
+	column 'Task 1 Numeric Probability'
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: NumericTask1Probability
+
+	column 'Task 1 Equal'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: Task1Equal
+
+	column 'Task 2 Categorical Probability'
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: CanonicalTask2Probability
+
+	column 'Task 2 Numeric Probability'
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: NumericTask2Probability
+
+	column 'Task 2 Equal'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: Task2Equal
+
+	partition 'Factor Regression Tests' = m
+		mode: import
+		source =
+			let
+				Encoded = Text.Combine({
+				"IkdlbmRlciIsIkNhbm9uaWNhbFRhc2sxUHJvYmFiaWxpdHkiLCJOdW1lcmljVGFzazFQcm9iYWJpbGl0eSIsIlRhc2sxRXF1YWwiLCJDYW5vbmljYWxUYXNrMlByb2JhYmlsaXR5IiwiTnVtZXJpY1Rhc2syUHJv",
+				"YmFiaWxpdHkiLCJUYXNrMkVxdWFsIgoiRmVtYWxlIiwwLjEwMjAyODE0NTY5NTM2NCwwLjEwMjAyODE0NTY5NTM2NCxUUlVFLDAuMDQzNjczNDY5Mzg3NzU1MSwwLjA0MzY3MzQ2OTM4Nzc1NTEsVFJVRQoiTWFs",
+				"ZSIsMC4xMDIwMjgxNDU2OTUzNjQsMC4xMDIwMjgxNDU2OTUzNjQsVFJVRSwwLjA0MzY3MzQ2OTM4Nzc1NTEsMC4wNDM2NzM0NjkzODc3NTUxLFRSVUUK"
+				}),
+				Decoded = Binary.FromText(Encoded, BinaryEncoding.Base64),
+				Source = Csv.Document(Decoded, [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"Gender", type text}, {"CanonicalTask1Probability", type number}, {"NumericTask1Probability", type number}, {"Task1Equal", type logical}, {"CanonicalTask2Probability", type number}, {"NumericTask2Probability", type number}, {"Task2Equal", type logical}}, "en-GB")
+			in
+				Typed

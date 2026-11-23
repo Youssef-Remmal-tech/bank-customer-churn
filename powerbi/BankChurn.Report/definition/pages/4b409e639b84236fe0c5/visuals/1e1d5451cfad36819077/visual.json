@@ -1,0 +1,184 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "1e1d5451cfad36819077",
+  "position": {
+    "x": 450,
+    "y": 480,
+    "z": 20000,
+    "height": 210,
+    "width": 810,
+    "tabOrder": 20000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Prediction Validation Cases"
+                    }
+                  },
+                  "Property": "Case"
+                }
+              },
+              "queryRef": "Prediction Validation Cases.Case",
+              "nativeQueryRef": "Case"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Prediction Validation Cases"
+                    }
+                  },
+                  "Property": "Gender"
+                }
+              },
+              "queryRef": "Prediction Validation Cases.Gender",
+              "nativeQueryRef": "Gender"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Prediction Validation Cases"
+                    }
+                  },
+                  "Property": "Geography"
+                }
+              },
+              "queryRef": "Prediction Validation Cases.Geography",
+              "nativeQueryRef": "Geography"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Prediction Validation Cases"
+                    }
+                  },
+                  "Property": "Task 1 Exit Probability"
+                }
+              },
+              "queryRef": "Prediction Validation Cases.Task 1 Exit Probability",
+              "nativeQueryRef": "Task 1 Exit Probability"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Prediction Validation Cases"
+                    }
+                  },
+                  "Property": "Task 2 Exit Probability"
+                }
+              },
+              "queryRef": "Prediction Validation Cases.Task 2 Exit Probability",
+              "nativeQueryRef": "Task 2 Exit Probability"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "columnAdjustment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'growToFit'"
+                }
+              }
+            },
+            "autoSizeColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Reference factor-level test cases'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Reference factor-level test cases'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
