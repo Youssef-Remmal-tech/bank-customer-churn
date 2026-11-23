@@ -1,11 +1,11 @@
 # Bank Customer Churn
 
-**Which customers are about to close their account, and who should the retention team call first?** A churn project for 10,000 retail bank customers. It covers exploratory analysis, five classification models compared on one hold-out set, k-means customer segments, and a Power BI-style report with a working prediction page.
+**Which customers are about to close their account, and who should the retention team call first?** A churn project for 10,000 retail bank customers. It covers exploratory analysis, five classification models compared on one hold-out set, k-means customer segments, a Power BI report with native DAX scoring, and a browser version anyone can open.
 
 [![tests](https://github.com/Youssef-Remmal-tech/bank-customer-churn/actions/workflows/ci.yml/badge.svg)](https://github.com/Youssef-Remmal-tech/bank-customer-churn/actions/workflows/ci.yml)
-![R](https://img.shields.io/badge/R-4.3+-252423) ![rpart](https://img.shields.io/badge/rpart%20%C2%B7%20caret%20%C2%B7%20pROC-252423) ![Power BI](https://img.shields.io/badge/Power%20BI-R%20visuals-252423)
+![R](https://img.shields.io/badge/R-4.3+-252423) ![rpart](https://img.shields.io/badge/rpart%20%C2%B7%20caret%20%C2%B7%20pROC-252423) ![Power BI](https://img.shields.io/badge/Power%20BI-PBIP%20%C2%B7%20DAX-252423)
 
-**[Open the interactive report](https://youssef-remmal-tech.github.io/bank-customer-churn/)** · **[Power BI fix](powerbi/README.md)** · **[Model results](outputs/tables/model_comparison.csv)**
+**[Open the interactive report](https://youssef-remmal-tech.github.io/bank-customer-churn/)** · **[Power BI report](powerbi/README.md)** · **[Model results](outputs/tables/model_comparison.csv)**
 
 Originally completed for the MSc Business Data Analytics Data Science module at Bangor University, where it received a Distinction. This repository rebuilds the work as a reproducible project and fixes the one defect found in review.
 
@@ -99,9 +99,17 @@ All metrics are on the 2,999 hold-out customers the models never saw (611 leaver
 
 Inactive customers in the newer high-balance segment leave at 32%, so they are where retention spend goes first. The segments explain 24.8% of the variance and split mainly on balance and tenure. They work as a planning view next to the model scores, not instead of them.
 
-## The interactive report
+## Two ways to use the results
 
-**[youssef-remmal-tech.github.io/bank-customer-churn](https://youssef-remmal-tech.github.io/bank-customer-churn/)** follows the structure of the original Power BI report, rebuilt so anyone can open it in a browser:
+### Power BI report
+
+[`powerbi/BankChurn.pbip`](powerbi/README.md) is a five-page Power BI Project: Overview, Model Performance, Tree Visualisations, Interactive Prediction, and Data & Validation. It is stored as readable text (PBIR and TMDL), so every visual and DAX measure can be reviewed here on GitHub. The data is embedded, so it opens in Power BI Desktop with no paths to fix and no R installation.
+
+The prediction page scores customers with **both trees written as DAX measures**, using the exact split values from the R models. They match R on all 10,000 customers.
+
+### Browser version
+
+**[youssef-remmal-tech.github.io/bank-customer-churn](https://youssef-remmal-tech.github.io/bank-customer-churn/)** follows the same structure for anyone without Power BI:
 
 | Page | What it shows |
 |---|---|
@@ -116,11 +124,13 @@ Both trees are exported from R as plain nodes and scored in the browser. A test 
 
 ## The Power BI fix
 
-The original Power BI prediction page only produced correct results for one gender. The trees were trained with `Gender` as a factor (Female = level 1, Male = level 2), but Power BI passed the slicer value as a number (0 or 1). The same risk applied to `IsActiveMember` and `HasCrCard`.
+The first version of the Power BI prediction page only produced correct results for one gender. The trees were trained with `Gender` as a factor (Female = level 1, Male = level 2), but Power BI passed the slicer value as a number (0 or 1). The same risk applied to `IsActiveMember` and `HasCrCard`.
 
-**Fix:** every categorical input is cast back to the exact training levels before `predict()` is called. This is in [`powerbi/prediction_visual.R`](powerbi/prediction_visual.R), which drops into the R visual, and in [`R/predict_customer.R`](R/predict_customer.R) for use outside Power BI. Unknown values now stop with a clear error instead of predicting silently.
+**Fix in the report:** scoring moved from R visuals to native DAX. Gender and Country are text slicers (Female/Male, France/Germany/Spain), and the tuned-tree measure converts them to the one-hot columns used in training. There is no numeric code left to misread, and no R needed at runtime.
 
-**Proof:** [`tests/test_pipeline.R`](tests/test_pipeline.R) shows that numeric Gender fails on the raw model. It then checks that 0/1 and Female/Male give identical predictions for both trees, and that both genders return valid probabilities. Details in [powerbi/README.md](powerbi/README.md).
+**Fix for R users:** every categorical input is cast back to the exact training levels before `predict()`. See [`powerbi/prediction_visual.R`](powerbi/prediction_visual.R) for the R visual and [`R/predict_customer.R`](R/predict_customer.R) for use outside Power BI. Unknown values stop with a clear error instead of predicting silently.
+
+**Proof:** [`tests/test_powerbi_dax.js`](tests/test_powerbi_dax.js) reads the DAX measures from the semantic model and scores all 10,000 customers against R. Task 1 is an exact match. [`tests/test_pipeline.R`](tests/test_pipeline.R) shows that numeric Gender fails on the raw model, and that 0/1 and Female/Male now give identical predictions for both trees. Details in [powerbi/README.md](powerbi/README.md).
 
 ## How to run
 
@@ -130,9 +140,10 @@ Rscript install.R            # caret, rpart, pROC, dplyr, jsonlite, testthat, e1
 Rscript run_all.R            # about 1 minute; rebuilds outputs/ and docs/data.js
 Rscript tests/test_pipeline.R
 node tests/test_dashboard.js # browser scoring matches R
+node tests/test_powerbi_dax.js # Power BI DAX scoring matches R
 ```
 
-Open `docs/index.html` in a browser to use the report locally.
+Open `powerbi/BankChurn.pbip` in Power BI Desktop, or `docs/index.html` in a browser.
 
 ## Project structure
 
@@ -146,8 +157,12 @@ Open `docs/index.html` in a browser to use the report locally.
 │   ├── 04_export.R            ROC chart, tables, tree export, dashboard data
 │   └── predict_customer.R     safe scoring for new customers (the fix)
 ├── powerbi/
-│   ├── prediction_visual.R    corrected R visual for the Prediction page
-│   └── README.md              the bug, its cause and the fix
+│   ├── BankChurn.pbip         five-page Power BI report (open in Power BI Desktop)
+│   ├── BankChurn.Report/      pages and visuals (PBIR)
+│   ├── BankChurn.SemanticModel/  tables, DAX measures, embedded data (TMDL)
+│   ├── validation/            R vs DAX checks, metric reconciliation
+│   ├── prediction_visual.R    corrected R visual, for R-based scoring
+│   └── README.md              pages, the bug, its cause and the fix
 ├── outputs/
 │   ├── tables/                model comparison, segments, coefficients, cleaned data
 │   ├── figures/               ROC chart, report screenshots
@@ -155,14 +170,15 @@ Open `docs/index.html` in a browser to use the report locally.
 ├── docs/                      interactive report (GitHub Pages)
 ├── tests/
 │   ├── test_pipeline.R        7 R tests: the fix, reproduced results, segments
-│   └── test_dashboard.js      browser scoring matches R for all 10,000 customers
+│   ├── test_dashboard.js      browser scoring matches R for all 10,000 customers
+│   └── test_powerbi_dax.js    Power BI DAX scoring matches R for all 10,000 customers
 └── run_all.R
 ```
 
 ## Key learnings
 
 - **Choose the metric before the model.** Accuracy ranked the Task 1 tree first, AUC and recall ranked the tuned tree first, and the business question (who to call with a fixed budget) decided between them.
-- **A model is not finished until it scores correctly where people use it.** The Power BI defect came from a type mismatch between training and deployment, not from the model itself. Fixed factor levels and a test now guard against it.
+- **A model is not finished until it scores correctly where people use it.** The Power BI defect came from a type mismatch between training and deployment, not from the model itself. Native DAX scoring, fixed factor levels and tests now guard against it.
 - **Check what a cluster actually is.** Profiling showed the lowest-churn segment is mostly customers with a zero balance, which changes how the segments should be read.
 
 ## Limitations and next steps
